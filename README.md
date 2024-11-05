@@ -1,4 +1,4 @@
-# Course-Transaction-Analysis-
+# Coursework-Transaction-Analysis-
 ### Курсовая по 3 модулю. Работа с банковскими операциями, файлами и отчетностью.
 
 ## Описание

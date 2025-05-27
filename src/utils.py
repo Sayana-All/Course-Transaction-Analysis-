@@ -6,7 +6,7 @@ from typing import Any
 
 import pandas as pd
 import requests
-from pandas import DataFrame
+from numpy import empty
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 rlt_file_path = os.path.join(current_dir, "../logs/utils.log")
@@ -20,7 +20,9 @@ logger.addHandler(file_handler)
 logger.setLevel(logging.INFO)
 
 
-def get_transactions_from_excel(file_path: str) -> DataFrame:
+def get_transactions_from_excel(
+    file_path=r"C:\Users\anisa\PycharmProjects\Course-Transaction-Analysis-\data\operations.xlsx",
+) -> pd.DataFrame | Any:
     """Чтение Excel-файла и получение списка транзакций"""
     logger.info(f"Запрос на чтение Excel-файла {file_path}")
     try:
@@ -28,16 +30,16 @@ def get_transactions_from_excel(file_path: str) -> DataFrame:
     except FileNotFoundError:
         logger.error("Ошибка! Файл не найден")
         print("Файл не найден. Пожалуйста, укажите другой путь для чтения файла")
-        return []
+        return empty
     except Exception as e:
         logger.error(f"Произошла ошибка {e}")
-        return []
+        return empty
     else:
         logger.info("Запрос на преобразование данных DataFrame успешно выполнен")
         return transactions_df
 
 
-def user_greeting(user_date: str) -> str|Any:
+def user_greeting(user_date: str) -> str | Any:
     """Приветствие в зависимости от времени суток"""
     try:
         dt = datetime.strptime(user_date, "%Y-%m-%d %H:%M:%S")
@@ -57,7 +59,7 @@ def user_greeting(user_date: str) -> str|Any:
         logger.info("Функция user_greeting выполнена успешно.")
 
 
-def filter_operations(operations: DataFrame, date: str) -> list[dict]:
+def filter_operations(operations: pd.DataFrame, date: str) -> list[dict]:
     """Фильтрация операций с начала месяца до входящей даты"""
     logger.info("Запрос на фильтрацию банковских операций")
     try:
@@ -92,17 +94,15 @@ def get_list_cards(operations: list[dict]) -> list[dict]:
     for digits, data in summary.items():
         total = round(data["total_spent"], 2)
         cashback = round(total * 0.01, 2)
-        cards.append({
-            "last_digits": digits,
-            "total_spent": total,
-            "cashback": cashback
-        })
+        cards.append({"last_digits": digits, "total_spent": total, "cashback": cashback})
 
     logger.info("Данные по банковским картам успешно сформированы.")
     return cards
 
 
-def read_user_settings(file_path=r"C:\Users\anisa\PycharmProjects\Course-Transaction-Analysis-\user_settings.json") -> dict:
+def read_user_settings(
+    file_path=r"C:\Users\anisa\PycharmProjects\Course-Transaction-Analysis-\user_settings.json",
+) -> dict:
     """Получение пользовательских настроек для курса валют и котировок акций"""
     logger.info("Запрос на получение списка валют и акций для пользователя")
     try:
@@ -123,9 +123,7 @@ def currency_rate(api_key: str, currencies: list[str], date: str) -> list[dict]:
         url = f"https://api.apilayer.com/exchangerates_data/{formatted_date}?symbols={symbols}&base=RUB"
 
         payload = {}
-        headers = {
-            "apikey": api_key
-        }
+        headers = {"apikey": api_key}
 
         response = requests.request("GET", url, headers=headers, data=payload)
         response.raise_for_status()
@@ -170,7 +168,8 @@ def get_top_transactions(operations: list[dict]) -> list[dict]:
     logger.info("Запрос на получение Топ-5 транзакций.")
     try:
         valid_ops = [
-            op for op in operations
+            op
+            for op in operations
             if op.get("Номер карты") and str(op["Номер карты"]).strip() != "" or str(op["Номер карты"] != "nan")
         ]
         sorted_ops = sorted(valid_ops, key=lambda x: abs(float(x.get("Сумма операции", 0))), reverse=True)
@@ -185,7 +184,7 @@ def get_top_transactions(operations: list[dict]) -> list[dict]:
                 "date": op.get("Дата платежа"),
                 "amount": round(op.get("Сумма операции", 0), 2),
                 "category": op.get("Категория", ""),
-                "description": op.get("Описание", "")
+                "description": op.get("Описание", ""),
             }
             for op in top_5
         ]

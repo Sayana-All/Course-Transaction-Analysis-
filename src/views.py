@@ -3,7 +3,8 @@ import os
 
 from dotenv import load_dotenv
 
-from src.utils import get_transactions_from_excel, filter_operations, read_user_settings, user_greeting, get_top_transactions, currency_rate, stock_prices, get_list_cards
+from src.utils import (currency_rate, filter_operations, get_list_cards, get_top_transactions,
+                       get_transactions_from_excel, read_user_settings, stock_prices, user_greeting)
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 rlt_file_path = os.path.join(current_dir, "../logs/views.log")
@@ -23,7 +24,7 @@ def main_page(date_str: str) -> dict:
     api_key_cr = os.getenv("API_KEY_CURRENCIES")
     api_key_st = os.getenv("API_KEY_STOCKS")
     try:
-        df = get_transactions_from_excel(r"C:\Users\anisa\PycharmProjects\Course-Transaction-Analysis-\data\operations.xlsx")
+        df = get_transactions_from_excel()
         operations = filter_operations(df, date_str)
         settings = read_user_settings()
     except Exception as e:
@@ -36,7 +37,7 @@ def main_page(date_str: str) -> dict:
             "cards": get_list_cards(operations),
             "top_transactions": get_top_transactions(operations),
             "currency_rates": currency_rate(api_key_cr, settings.get("user_currencies", []), date_str),
-            "stock_prices": stock_prices(api_key_st, settings.get("user_stocks", []))
+            "stock_prices": stock_prices(api_key_st, settings.get("user_stocks", [])),
         }
 
 

@@ -1,5 +1,5 @@
-import os
 import logging
+import os
 import re
 from collections import defaultdict
 from datetime import datetime
@@ -17,9 +17,7 @@ logger.addHandler(file_handler)
 logger.setLevel(logging.INFO)
 
 
-def calculate_increased_cashback(
-    operations: list[dict[str, Any]], year: str, month: str
-) -> dict[str, float]:
+def calculate_increased_cashback(operations: list[dict[str, Any]], year: str, month: str) -> dict[str, float]:
     """Анализ категорий повышенного кэшбэка"""
     logger.info(f"Анализ повышенного кэшбэка за {year}-{month}")
     result = defaultdict(float)
@@ -55,7 +53,7 @@ def calculate_increased_cashback(
             logger.warning(f"Ошибка при обработке записи: {e}")
             continue
 
-    logger.info(f"Завершен расчет кешбэка по категориям.")
+    logger.info("Завершен расчет кэшбэка по категориям.")
     return dict(result)
 
 
@@ -66,11 +64,13 @@ def simple_search(operations: list[dict], query: str) -> list[dict]:
     logger.info(f"Поиск по строке: '{query}'")
     query_lower = query.lower()
 
-    result = list(filter(
-        lambda op: query_lower in str(op.get("Категория", "")).lower() or
-                   query_lower in str(op.get("Описание", "")).lower(),
-        operations
-    ))
+    result = list(
+        filter(
+            lambda op: query_lower in str(op.get("Категория", "")).lower()
+            or query_lower in str(op.get("Описание", "")).lower(),
+            operations,
+        )
+    )
 
     logger.info(f"Найдено {len(result)} совпадений")
     return result
@@ -78,14 +78,9 @@ def simple_search(operations: list[dict], query: str) -> list[dict]:
 
 def search_phone_numbers(operations: list[dict]) -> list[dict]:
     """Поиск операций по номеру телефона в описании"""
-    phone_pattern = re.compile(
-        r"\+7\s?\(?9\d{2}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}"
-    )
+    phone_pattern = re.compile(r"\+7\s?\(?9\d{2}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}")
 
-    result = list(filter(
-        lambda op: bool(phone_pattern.search(str(op.get("Описание", "")))),
-        operations
-    ))
+    result = list(filter(lambda op: bool(phone_pattern.search(str(op.get("Описание", "")))), operations))
 
     logger.info(f"Найдено {len(result)} транзакций с номерами телефонов")
     return result

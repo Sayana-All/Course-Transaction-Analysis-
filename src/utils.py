@@ -63,7 +63,16 @@ def filter_operations(operations: pd.DataFrame, date: str) -> list[dict]:
     """Фильтрация операций с начала месяца до входящей даты"""
     logger.info("Запрос на фильтрацию банковских операций")
     try:
-        operations["Дата операции"] = pd.to_datetime(operations["Дата операции"], dayfirst=True)
+        def parse_mixed_dates(date_series):
+            """Перебор форматов дат и приведение к единому формату"""
+            for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d", "%d.%m.%Y %H:%M:%S", "%d.%m.%Y"):
+                parsed_dates = pd.to_datetime(date_series, format=fmt, errors="coerce")
+                if parsed_dates.notna().all():
+                    return parsed_dates
+            return pd.to_datetime(date_series, errors="coerce")
+
+
+        operations["Дата операции"] = parse_mixed_dates(operations["Дата операции"])
         end_date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
         start_date = end_date.replace(day=1)
         filtered = operations[(operations["Дата операции"] >= start_date) & (operations["Дата операции"] <= end_date)]

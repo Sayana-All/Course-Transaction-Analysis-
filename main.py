@@ -4,6 +4,7 @@ from src.utils import get_transactions_from_excel
 from src.views import main_page
 
 if __name__ == "__main__":
+    # Создание DataFrame из Excel-файла
     df = get_transactions_from_excel()
     transactions = df.to_dict(orient="records")
 

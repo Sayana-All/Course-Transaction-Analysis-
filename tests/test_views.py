@@ -52,6 +52,7 @@ def test_main_page_success(
 @patch("src.views.get_transactions_from_excel", side_effect=Exception("Ошибка чтения Excel"))
 @patch("src.views.load_dotenv")
 def test_main_page_error(mock_load_dotenv, mock_get_transactions):
+    """Проверка исключения с ошибкой чтения файла Excel"""
     result = main_page("2024-05-25 12:00:00")
     assert "error" in result
     assert result["error"] == "Ошибка чтения Excel"

@@ -18,6 +18,7 @@ from src.utils import (
 
 
 def test_user_greeting():
+    """Тестирование функции приветствия пользователя в зависимости от времени суток"""
     assert user_greeting("2024-01-21 08:00:00") == "Доброе утро!"
     assert user_greeting("2024-02-22 13:00:00") == "Добрый день!"
     assert user_greeting("2024-03-23 20:00:00") == "Добрый вечер!"
@@ -26,6 +27,7 @@ def test_user_greeting():
 
 
 def test_filter_operations(mock_transactions):
+    """Тестирование функции фильтрации операции по указанной дате и времени"""
     df = pd.DataFrame(mock_transactions)
     result = filter_operations(df, "2024-05-25 23:59:59")
     assert type(result) == list
@@ -40,6 +42,7 @@ def test_filter_operations(mock_transactions):
 
 
 def test_get_list_cards(mock_transactions):
+    """Тестирование функции по отображению списка карт и информации по ним"""
     result = get_list_cards(mock_transactions)
     assert isinstance(result, list)
     assert result[0]["last_digits"] == "1234"
@@ -48,6 +51,7 @@ def test_get_list_cards(mock_transactions):
 
 
 def test_get_top_transactions(mock_transactions):
+    """Тестирование функции получения топ-5 транзакций из списка"""
     result = get_top_transactions(mock_transactions)
     assert isinstance(result, list)
     assert len(result) <= 5
@@ -56,6 +60,7 @@ def test_get_top_transactions(mock_transactions):
 
 @patch("builtins.open", new_callable=mock_open, read_data='{"user_currencies": ["USD"], "user_stocks": ["AAPL"]}')
 def test_read_user_settings(mock_file):
+    """Тестирование функции по чтению пользовательских настроек по курсам валют и акциям из файла"""
     result = read_user_settings("dummy_path.json")
     assert result["user_currencies"] == ["USD"]
     assert result["user_stocks"] == ["AAPL"]
@@ -63,6 +68,7 @@ def test_read_user_settings(mock_file):
 
 @patch("requests.request")
 def test_currency_rate_success(mock_request, mock_settings):
+    """Тестирование функции по получению курса валют"""
     mock_response = MagicMock()
     mock_response.raise_for_status.return_value = None
     mock_response.json.return_value = {"rates": {"USD": 0.013}}
@@ -74,6 +80,7 @@ def test_currency_rate_success(mock_request, mock_settings):
 
 @patch("requests.get")
 def test_stock_prices_success(mock_get, mock_settings):
+    """Тестирование функции по получению котировок акций"""
     mock_response = MagicMock()
     mock_response.json.return_value = {"c": 123.456}
     mock_get.return_value = mock_response

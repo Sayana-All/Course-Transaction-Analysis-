@@ -70,6 +70,7 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
     three_months_ago = now - timedelta(days=90)
     transactions = transactions.copy()
     try:
+
         def parse_mixed_dates(date_series):
             """Перебор форматов дат и приведение к единому формату"""
             for fmt in ("%d.%m.%Y %H:%M:%S", "%d.%m.%Y", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):

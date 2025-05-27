@@ -1,20 +1,11 @@
-import pytest
-import pandas as pd
-from unittest.mock import patch, mock_open, MagicMock
-from datetime import datetime
+from unittest.mock import MagicMock, mock_open, patch
 
+import pandas as pd
+import pytest
 from pandas import Timestamp
 
-from src.utils import (
-    get_transactions_from_excel,
-    user_greeting,
-    filter_operations,
-    get_list_cards,
-    read_user_settings,
-    currency_rate,
-    stock_prices,
-    get_top_transactions,
-)
+from src.utils import (currency_rate, filter_operations, get_list_cards, get_top_transactions,
+                       get_transactions_from_excel, read_user_settings, stock_prices, user_greeting)
 
 
 def test_get_transactions_from_excel(sample_excel_file):
@@ -43,14 +34,14 @@ def test_filter_operations(mock_transactions):
     """Тестирование функции фильтрации операции по указанной дате и времени"""
     df = pd.DataFrame(mock_transactions)
     result = filter_operations(df, "2024-05-25 23:59:59")
-    assert type(result) == list
+    assert isinstance(result, list)
     assert len(result) == 2
     assert result[0] == {
-        'Дата операции': Timestamp('2024-05-25 09:00:00'),
-        'Категория': 'Еда',
-        'Номер карты': '****1234',
-        'Описание': 'Покупка в магазине',
-        'Сумма операции': 1000
+        "Дата операции": Timestamp("2024-05-25 09:00:00"),
+        "Категория": "Еда",
+        "Номер карты": "****1234",
+        "Описание": "Покупка в магазине",
+        "Сумма операции": 1000,
     }
 
 
@@ -80,7 +71,7 @@ def test_read_user_settings(mock_file):
 
 
 @patch("requests.request")
-def test_currency_rate_success(mock_request, mock_settings):
+def test_currency_rate(mock_request, mock_settings):
     """Тестирование функции по получению курса валют"""
     mock_response = MagicMock()
     mock_response.raise_for_status.return_value = None
@@ -92,7 +83,7 @@ def test_currency_rate_success(mock_request, mock_settings):
 
 
 @patch("requests.get")
-def test_stock_prices_success(mock_get, mock_settings):
+def test_stock_prices(mock_get, mock_settings):
     """Тестирование функции по получению котировок акций"""
     mock_response = MagicMock()
     mock_response.json.return_value = {"c": 123.456}

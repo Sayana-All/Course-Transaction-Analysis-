@@ -6,7 +6,6 @@ from typing import Any
 
 import pandas as pd
 import requests
-from numpy import empty
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 rlt_file_path = os.path.join(current_dir, "../logs/utils.log")
@@ -64,6 +63,7 @@ def filter_operations(operations: pd.DataFrame, date: str) -> list[dict]:
     """Фильтрация операций с начала месяца до входящей даты"""
     logger.info("Запрос на фильтрацию банковских операций")
     try:
+
         def parse_mixed_dates(date_series):
             """Перебор форматов дат и приведение к единому формату"""
             for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d", "%d.%m.%Y %H:%M:%S", "%d.%m.%Y"):
@@ -71,7 +71,6 @@ def filter_operations(operations: pd.DataFrame, date: str) -> list[dict]:
                 if parsed_dates.notna().all():
                     return parsed_dates
             return pd.to_datetime(date_series, errors="coerce")
-
 
         operations["Дата операции"] = parse_mixed_dates(operations["Дата операции"])
         end_date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")

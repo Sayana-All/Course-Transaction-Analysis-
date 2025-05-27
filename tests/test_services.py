@@ -1,6 +1,6 @@
 import pytest
 
-from src.services import calculate_increased_cashback, simple_search, search_phone_numbers
+from src.services import calculate_increased_cashback, search_phone_numbers, simple_search
 
 
 def test_calculate_increased_cashback(mock_extended_transactions):

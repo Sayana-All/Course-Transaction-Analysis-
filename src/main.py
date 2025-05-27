@@ -1,9 +1,10 @@
-from src.services import simple_search, search_phone_numbers, calculate_increased_cashback
+from src.reports import spending_by_category
+from src.services import calculate_increased_cashback, search_phone_numbers, simple_search
 from src.utils import get_transactions_from_excel
 from src.views import main_page
 
 if __name__ == "__main__":
-    df = get_transactions_from_excel(r"C:\Users\anisa\PycharmProjects\Course-Transaction-Analysis-\data\operations.xlsx")
+    df = get_transactions_from_excel()
     transactions = df.to_dict(orient="records")
 
     # Страница Главная
@@ -20,3 +21,7 @@ if __name__ == "__main__":
     # Поиск телефонов
     phone_result = search_phone_numbers(transactions)
     print("\nПоиск по телефонам:", phone_result)
+
+    # отчет по тратам в определённой категории
+    result_df = spending_by_category(df, category="Супермаркеты", date="2021-12-31")
+    print("\nТраты в категории 'Супермаркеты':\n", result_df.head())

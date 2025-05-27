@@ -24,6 +24,7 @@ def get_transactions_from_excel(
     file_path=r"C:\Users\anisa\PycharmProjects\Course-Transaction-Analysis-\data\operations.xlsx",
 ) -> pd.DataFrame | Any:
     """Чтение Excel-файла и получение списка транзакций"""
+    empty = pd.DataFrame()
     logger.info(f"Запрос на чтение Excel-файла {file_path}")
     try:
         transactions_df = pd.read_excel(file_path)

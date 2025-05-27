@@ -1,5 +1,28 @@
+import os
+import tempfile
+
 import pytest
 import pandas as pd
+
+
+@pytest.fixture
+def sample_excel_file():
+    df = pd.DataFrame({
+        "Номер карты": ["****1234", "****5678"],
+        "Сумма операции": [1000, 500],
+        "Категория": ["Еда", "Развлечения"],
+        "Описание": ["Покупка в кафе", "Билет в театр"],
+        "Дата операции": ["2024-05-01", "2024-05-03"]
+    })
+
+    temp_dir = tempfile.mkdtemp()
+    file_path = os.path.join(temp_dir, "test_transactions.xlsx")
+    df.to_excel(file_path, index=False)
+
+    yield file_path
+
+    os.remove(file_path)
+
 
 @pytest.fixture
 def mock_transactions():

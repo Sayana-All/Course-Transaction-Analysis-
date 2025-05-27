@@ -17,6 +17,19 @@ from src.utils import (
 )
 
 
+def test_get_transactions_from_excel(sample_excel_file):
+    df = get_transactions_from_excel(sample_excel_file)
+    assert isinstance(df, pd.DataFrame)
+    assert not df.empty
+    assert set(["Номер карты", "Сумма операции", "Категория", "Описание", "Дата операции"]).issubset(df.columns)
+
+
+def test_get_transactions_file_not_found():
+    result = get_transactions_from_excel("non_existent_file.xlsx")
+    assert isinstance(result, pd.DataFrame)
+    assert result.empty
+
+
 def test_user_greeting():
     """Тестирование функции приветствия пользователя в зависимости от времени суток"""
     assert user_greeting("2024-01-21 08:00:00") == "Доброе утро!"

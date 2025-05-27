@@ -1,5 +1,5 @@
 import pytest
-
+import pandas as pd
 
 @pytest.fixture
 def mock_transactions():
@@ -32,3 +32,35 @@ def mock_stock_prices_fixture():
 @pytest.fixture
 def mock_settings():
     return {"user_currencies": ["USD"], "user_stocks": ["AAPL"]}
+
+
+@pytest.fixture
+def mock_extended_transactions():
+    return [
+        {
+            "Номер карты": "****1234",
+            "Сумма операции": 1000,
+            "Категория": "Еда",
+            "Описание": "Покупка продуктов в супермаркете",
+            "Дата операции": "2024-05-15",
+        },
+        {
+            "Номер карты": "****1234",
+            "Сумма операции": 300,
+            "Категория": "Развлечения",
+            "Описание": "Билет в кино +7 (912) 345-67-89",
+            "Дата операции": "2024-05-08",
+        },
+        {
+            "Номер карты": "****5678",
+            "Сумма операции": 700,
+            "Категория": "Еда",
+            "Описание": "Заказ еды через доставку",
+            "Дата операции": "2024-03-10",
+        },
+    ]
+
+
+@pytest.fixture
+def mock_transaction_df(mock_extended_transactions):
+    return pd.DataFrame(mock_extended_transactions)

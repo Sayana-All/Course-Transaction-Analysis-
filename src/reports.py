@@ -70,7 +70,15 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
     three_months_ago = now - timedelta(days=90)
     transactions = transactions.copy()
     try:
-        transactions["Дата операции"] = pd.to_datetime(transactions["Дата операции"], dayfirst=True)
+        def parse_mixed_dates(date_series):
+            """Перебор форматов дат и приведение к единому формату"""
+            for fmt in ("%d.%m.%Y %H:%M:%S", "%d.%m.%Y", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):
+                parsed = pd.to_datetime(date_series, format=fmt, errors="coerce")
+                if parsed.notna().sum() > 0:
+                    return parsed
+            return pd.to_datetime(date_series, errors="coerce")
+
+        transactions["Дата операции"] = parse_mixed_dates(transactions["Дата операции"])
     except Exception as e:
         logger.error(f"Ошибка преобразования дат: {e}")
         return pd.DataFrame()

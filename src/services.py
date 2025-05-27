@@ -18,7 +18,7 @@ logger.setLevel(logging.INFO)
 
 
 def calculate_increased_cashback(operations: list[dict[str, Any]], year: str, month: str) -> dict[str, float]:
-    """Анализ категорий повышенного кэшбэка"""
+    """Анализ категорий для подсчета повышенного кэшбэка"""
     logger.info(f"Анализ повышенного кэшбэка за {year}-{month}")
     result = defaultdict(float)
 

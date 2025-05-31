@@ -73,6 +73,7 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
     transactions = transactions.copy()
 
     try:
+
         def parse_mixed_dates(date_series):
             """Пытается преобразовать серию дат к формату datetime"""
             for fmt in ("%d.%m.%Y %H:%M:%S", "%d.%m.%Y", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):
@@ -91,6 +92,6 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
         (transactions["Категория"] == category)
         & (transactions["Дата операции"] >= three_months_ago)
         & (transactions["Дата операции"] <= now)
-        ]
+    ]
 
     return converting_data_to_json(filtered)

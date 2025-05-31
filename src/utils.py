@@ -46,8 +46,11 @@ def converting_data_to_json(data: Any) -> str:
         data = data.to_dict(orient="records")
 
     try:
-        result = json.dumps(data, ensure_ascii=False, indent=4)
+        result = json.dumps(data, ensure_ascii=False, indent=4, default=str)
     except (TypeError, ValueError) as e:
+        logger.error(f"Ошибка при конвертации в JSON: {e}")
+        return json.dumps({"error": f"Ошибка при конвертации в JSON: {e}"}, ensure_ascii=False)
+    except Exception as e:
         logger.error(f"Ошибка при конвертации в JSON: {e}")
         return json.dumps({"error": f"Ошибка при конвертации в JSON: {e}"}, ensure_ascii=False)
     else:

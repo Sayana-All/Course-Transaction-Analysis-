@@ -3,9 +3,8 @@ import os
 
 from dotenv import load_dotenv
 
-from src.utils import (currency_rate, filter_operations, get_list_cards, get_top_transactions,
-                       get_transactions_from_excel, read_user_settings, stock_prices, user_greeting,
-                       converting_data_to_json)
+from src.utils import (converting_data_to_json, currency_rate, filter_operations, get_list_cards, get_top_transactions,
+                       get_transactions_from_excel, read_user_settings, stock_prices, user_greeting)
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 rlt_file_path = os.path.join(current_dir, "../logs/views.log")
@@ -33,13 +32,15 @@ def main_page(date_str: str) -> str:
         return converting_data_to_json({"error": str(e)})
     else:
         logger.info("Данные для Главной страницы успешно сформированы.")
-        return converting_data_to_json({
-            "greeting": user_greeting(date_str),
-            "cards": get_list_cards(operations),
-            "top_transactions": get_top_transactions(operations),
-            "currency_rates": currency_rate(api_key_cr, settings.get("user_currencies", []), date_str),
-            "stock_prices": stock_prices(api_key_st, settings.get("user_stocks", [])),
-        })
+        return converting_data_to_json(
+            {
+                "greeting": user_greeting(date_str),
+                "cards": get_list_cards(operations),
+                "top_transactions": get_top_transactions(operations),
+                "currency_rates": currency_rate(api_key_cr, settings.get("user_currencies", []), date_str),
+                "stock_prices": stock_prices(api_key_st, settings.get("user_stocks", [])),
+            }
+        )
 
 
 if __name__ == "__main__":
@@ -47,4 +48,3 @@ if __name__ == "__main__":
     result = main_page("2021-10-20 19:30:00")
     print(type(result))
     print(result)
-

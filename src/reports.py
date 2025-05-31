@@ -6,6 +6,8 @@ from typing import Callable, Literal, Optional
 
 import pandas as pd
 
+from src.utils import converting_data_to_json
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 rlt_file_path = os.path.join(current_dir, "../logs/reports.log")
 abs_file_path = os.path.abspath(rlt_file_path)
@@ -56,7 +58,7 @@ def save_file(filename: Optional[str] = None, file_format: Literal["excel", "csv
 
 
 @save_file(file_format="csv")
-def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None) -> pd.DataFrame:
+def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None) -> str:
     """Возвращает отчет по тратам за последние 3 месяца с указанной даты по заданной категории"""
     if date is None:
         now = datetime.now()
@@ -65,14 +67,14 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
             now = datetime.strptime(date, "%Y-%m-%d")
         except ValueError:
             logger.error("Дата должна быть в формате YYYY-MM-DD.")
-            return pd.DataFrame()
+            return converting_data_to_json([])
 
     three_months_ago = now - timedelta(days=90)
     transactions = transactions.copy()
-    try:
 
+    try:
         def parse_mixed_dates(date_series):
-            """Перебор форматов дат и приведение к единому формату"""
+            """Пытается преобразовать серию дат к формату datetime"""
             for fmt in ("%d.%m.%Y %H:%M:%S", "%d.%m.%Y", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):
                 parsed = pd.to_datetime(date_series, format=fmt, errors="coerce")
                 if parsed.notna().sum() > 0:
@@ -80,14 +82,15 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
             return pd.to_datetime(date_series, errors="coerce")
 
         transactions["Дата операции"] = parse_mixed_dates(transactions["Дата операции"])
+
     except Exception as e:
         logger.error(f"Ошибка преобразования дат: {e}")
-        return pd.DataFrame()
+        return converting_data_to_json([])
 
-    filtered_transactions = transactions[
+    filtered = transactions[
         (transactions["Категория"] == category)
         & (transactions["Дата операции"] >= three_months_ago)
         & (transactions["Дата операции"] <= now)
-    ]
+        ]
 
-    return filtered_transactions
+    return converting_data_to_json(filtered)

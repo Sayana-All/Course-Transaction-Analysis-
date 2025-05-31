@@ -5,6 +5,8 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Any
 
+from src.utils import converting_data_to_json
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 rlt_file_path = os.path.join(current_dir, "../logs/services.log")
 abs_file_path = os.path.abspath(rlt_file_path)
@@ -17,7 +19,7 @@ logger.addHandler(file_handler)
 logger.setLevel(logging.INFO)
 
 
-def calculate_increased_cashback(operations: list[dict[str, Any]], year: str, month: str) -> dict[str, float]:
+def calculate_increased_cashback(operations: list[dict[str, Any]], year: str, month: str) -> str:
     """Анализ категорий для подсчета повышенного кэшбэка"""
     logger.info(f"Анализ повышенного кэшбэка за {year}-{month}")
     result = defaultdict(float)
@@ -54,10 +56,10 @@ def calculate_increased_cashback(operations: list[dict[str, Any]], year: str, mo
             continue
 
     logger.info("Завершен расчет кэшбэка по категориям.")
-    return dict(result)
+    return converting_data_to_json(dict(result))
 
 
-def simple_search(operations: list[dict], query: str) -> list[dict]:
+def simple_search(operations: list[dict], query: str) -> str:
     """
     Возвращает список транзакций, содержащих строку `query` в категории или описании.
     """
@@ -73,14 +75,14 @@ def simple_search(operations: list[dict], query: str) -> list[dict]:
     )
 
     logger.info(f"Найдено {len(result)} совпадений")
-    return result
+    return converting_data_to_json(result)
 
 
-def search_phone_numbers(operations: list[dict]) -> list[dict]:
+def search_phone_numbers(operations: list[dict]) -> str:
     """Поиск операций по номеру телефона в описании"""
     phone_pattern = re.compile(r"\+7\s?\(?9\d{2}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}")
 
     result = list(filter(lambda op: bool(phone_pattern.search(str(op.get("Описание", "")))), operations))
 
     logger.info(f"Найдено {len(result)} транзакций с номерами телефонов")
-    return result
+    return converting_data_to_json(result)

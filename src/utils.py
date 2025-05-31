@@ -39,6 +39,22 @@ def get_transactions_from_excel(
         return transactions_df
 
 
+def converting_data_to_json(data: Any) -> str:
+    """Конвертация данных в JSON-строку"""
+    logger.info("Запрос на форматирование данных в JSON-строку")
+    if isinstance(data, pd.DataFrame):
+        data = data.to_dict(orient="records")
+
+    try:
+        result = json.dumps(data, ensure_ascii=False, indent=4)
+    except (TypeError, ValueError) as e:
+        logger.error(f"Ошибка при конвертации в JSON: {e}")
+        return json.dumps({"error": f"Ошибка при конвертации в JSON: {e}"}, ensure_ascii=False)
+    else:
+        logger.info("Конвертация данных в формат JSON успешно завершена.")
+        return result
+
+
 def user_greeting(user_date: str) -> str | Any:
     """Приветствие в зависимости от времени суток"""
     try:

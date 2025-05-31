@@ -1,3 +1,4 @@
+import json
 from unittest.mock import patch
 
 import pytest
@@ -42,13 +43,14 @@ def test_main_page_success(
     mock_stock_prices.return_value = mock_stock_prices_fixture
 
     result = main_page("2024-05-25 12:00:00")
+    data = json.loads(result)
 
-    assert "greeting" in result
-    assert result["greeting"] == "Добрый день!"
-    assert result["cards"] == mock_cards
-    assert result["top_transactions"] == mock_top_transactions
-    assert result["currency_rates"] == mock_currency_rates
-    assert result["stock_prices"] == mock_stock_prices_fixture
+    assert "greeting" in data
+    assert data["greeting"] == "Добрый день!"
+    assert data["cards"] == mock_cards
+    assert data["top_transactions"] == mock_top_transactions
+    assert data["currency_rates"] == mock_currency_rates
+    assert data["stock_prices"] == mock_stock_prices_fixture
 
 
 @patch("src.views.get_transactions_from_excel", side_effect=Exception("Ошибка чтения Excel"))
@@ -56,5 +58,6 @@ def test_main_page_success(
 def test_main_page_error(mock_load_dotenv, mock_get_transactions):
     """Проверка исключения с ошибкой чтения файла Excel"""
     result = main_page("2024-05-25 12:00:00")
-    assert "error" in result
-    assert result["error"] == "Ошибка чтения Excel"
+    data = json.loads(result)
+    assert "error" in data
+    assert data["error"] == "Ошибка чтения Excel"

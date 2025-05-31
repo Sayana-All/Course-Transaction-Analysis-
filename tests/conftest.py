@@ -100,4 +100,11 @@ def mock_extended_transactions():
 
 @pytest.fixture
 def mock_transaction_df(mock_extended_transactions):
-    return pd.DataFrame(mock_extended_transactions)
+    return pd.DataFrame(
+        [
+            {"Категория": "Еда", "Дата операции": "2024-04-10", "Сумма": 500},
+            {"Категория": "Еда", "Дата операции": "2024-05-20", "Сумма": 300},
+            {"Категория": "Развлечения", "Дата операции": "2024-05-01", "Сумма": 1000},
+            {"Категория": "Еда", "Дата операция": "2023-12-31", "Сумма": 200},
+        ]
+    )

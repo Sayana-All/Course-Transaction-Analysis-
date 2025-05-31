@@ -1,10 +1,11 @@
+import json
 from unittest.mock import MagicMock, mock_open, patch
 
 import pandas as pd
 import pytest
 from pandas import Timestamp
 
-from src.utils import (currency_rate, filter_operations, get_list_cards, get_top_transactions,
+from src.utils import (converting_data_to_json, currency_rate, filter_operations, get_list_cards, get_top_transactions,
                        get_transactions_from_excel, read_user_settings, stock_prices, user_greeting)
 
 
@@ -21,13 +22,19 @@ def test_get_transactions_file_not_found():
     assert result.empty
 
 
-def test_user_greeting():
+@pytest.mark.parametrize(
+    "input_date,expected",
+    [
+        ("2021-10-20 06:00:00", "Доброе утро!"),
+        ("2021-10-20 13:00:00", "Добрый день!"),
+        ("2021-10-20 19:00:00", "Добрый вечер!"),
+        ("2021-10-20 02:00:00", "Доброй ночи!"),
+        ("some_date", "Здравствуйте!"),
+    ],
+)
+def test_user_greeting(input_date: str, expected: str):
     """Тестирование функции приветствия пользователя в зависимости от времени суток"""
-    assert user_greeting("2024-01-21 08:00:00") == "Доброе утро!"
-    assert user_greeting("2024-02-22 13:00:00") == "Добрый день!"
-    assert user_greeting("2024-03-23 20:00:00") == "Добрый вечер!"
-    assert user_greeting("2024-04-24 01:00:00") == "Доброй ночи!"
-    assert user_greeting("some_date") == "Здравствуйте!"
+    assert user_greeting(input_date) == expected
 
 
 def test_filter_operations(mock_transactions):
@@ -91,3 +98,30 @@ def test_stock_prices(mock_get, mock_settings):
 
     result = stock_prices("fake_key", ["AAPL"])
     assert result == [{"stock": "AAPL", "price": 123.46}]
+
+
+@pytest.mark.parametrize(
+    "input_data,expected",
+    [
+        ({"key": "value"}, '{"key": "value"}'),
+        ([{"name": "Alice"}, {"name": "Bob"}], '[{"name": "Alice"}, {"name": "Bob"}]'),
+        (pd.DataFrame([{"a": 1, "b": 2}, {"a": 3, "b": 4}]), '[{"a": 1, "b": 2}, {"a": 3, "b": 4}]'),
+        ("строка", '"строка"'),
+        (123, "123"),
+    ],
+)
+def test_converting_data_to_json(input_data, expected):
+    """Тестирование функции конвертации данных в JSON-строку и обратное преобразование"""
+    result = converting_data_to_json(input_data)
+    assert json.loads(result) == json.loads(expected)
+
+
+def test_crashed_converting_data_to_json_with_func():
+    """Обработка исключения при конвертации с использованием объекта функции"""
+
+    def sample_func():
+        return "Some data"
+
+    result = converting_data_to_json(sample_func)
+    assert isinstance(result, str)
+    assert result.startswith('"<function test_crashed_converting_data_to_json_with_func.<locals>.sample_func')

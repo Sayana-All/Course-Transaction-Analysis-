@@ -25,4 +25,4 @@ if __name__ == "__main__":
 
     # отчет по тратам в определённой категории
     result_df = spending_by_category(df, category="Супермаркеты", date="2021-12-31")
-    print("\nТраты в категории 'Супермаркеты':\n", result_df.head())
+    print("\nТраты в категории 'Супермаркеты':\n", result_df)
